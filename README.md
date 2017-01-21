@@ -1,8 +1,29 @@
 # ActiveadminAncestryView
 This gem allows to vizualize [ancestry](https://github.com/stefankroes/ancestry) subtree in [ActiveAdmin](https://github.com/activeadmin/activeadmin) resource.
 
+## Installation
+
+Add to your Gemfile
+
+```ruby
+gem 'activeadmin', github: 'activeadmin'
+gem 'ancestry'
+
+gem 'activeadmin_view_ancestry'
+```
+
+And then execute
+
+```
+$ bundle
+```
+
+To install activeadmin_view_ancestry assets run
+```
+$ rails generate activeadmin_view_ancestry:install
+```
+
 ## TODO
-+ Generators: include .css and .js of gem to main app
 + Formastatic methods with options:
   - header_titles: []
   - table_titles: []
