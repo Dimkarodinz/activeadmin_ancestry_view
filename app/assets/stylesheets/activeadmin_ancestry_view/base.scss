@@ -1,0 +1,80 @@
+$active-color: #60C27F;
+$archived-color: #dfdf74;
+$fired-color: #ff5247;
+$fired-shadow-color: #eee9e9;
+
+$panel-header-color: #5E6469;
+$selectable-color: rgba(122, 158, 255, 0.7);
+
+$bool-true-color: #222240;
+$bool-false-color: #989DB8;
+
+@mixin true_transition {
+  transition: 0.1s ease;
+}
+
+.center {
+  margin-left: 3em;
+  color: $fired-color !important;
+  text-shadow: 0.1em 0.1em $fired-shadow-color !important;
+}
+
+.status_tag {
+  &.active { background: $active-color; }
+  &.archived { background: $archived-color; }
+}
+
+.bool-value {
+  &.true-value {
+    color: $bool-true-color
+  }
+
+  &.false-value {
+    color: $bool-false-color
+  }
+}
+
+div[class*='panel-'] {
+  @include true_transition
+}
+
+.panel_contents table {
+  margin-bottom: 0.1em !important;
+}
+
+.select-date {
+  .select2-container {
+    width: 45% !important;
+  }
+
+  .select-date-submit {
+    margin-top: 0.7em;
+
+    input {
+      width: 90% !important;
+    }
+  }
+}
+
+.selectable {
+  background-color: $selectable-color !important;
+}
+
+.hided, #collection_selection_toggle_panel {
+  display: none;
+}
+
+.show-content, .to-structure, .show-childrens {
+  cursor: pointer;
+  float: right;
+}
+
+.panel-header span {
+  color: $panel-header-color;
+  font-weight: bold;
+  font-size: 1.1em !important;
+}
+
+.panel-margin-bottom {
+  margin-bottom: 0.4em !important;
+}

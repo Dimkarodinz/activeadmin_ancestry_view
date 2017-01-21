@@ -1,0 +1,6 @@
+div.panel-container class=generate_panel_classes(user) id=user.id style=shift_panel_by_depth(user)
+  div.panel.panel-margin-bottom
+    div.panel-header style=random_bckgr_color(user)
+      = render 'activeadmin_ancestry_view/panel_header_links', user: user
+    div.panel_contents class='hided'
+      = render 'activeadmin_ancestry_view/content_table', user: user

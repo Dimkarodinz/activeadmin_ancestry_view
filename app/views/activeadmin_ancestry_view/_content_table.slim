@@ -1,0 +1,23 @@
+table
+  tbody
+    tr
+      th
+        | Some text
+        b
+        = user.first_name
+      th
+        | Some text
+        b
+        = user.created_at.strftime("%m%y")
+      th
+        | id
+        b
+        = user.id
+      th
+        | Some text
+        b
+        = user.last_name
+      th
+        | Some text
+        b
+        = user.additional
