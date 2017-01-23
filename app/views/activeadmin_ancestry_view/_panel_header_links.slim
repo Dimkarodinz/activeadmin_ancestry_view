@@ -1,12 +1,12 @@
 / left link
 span
-  = user.id
-  = link_to 'some link', admin_user_path(user.id)
+  = resource.id
+  = link_to 'some link', admin_user_path(resource.id)
 
 / links on right side
 a.view_link.member_link class='show-content'
   = t(:info)
-- unless user.is_childless?
+- unless resource.is_childless?
   a.view_link.member_link class='show-childrens'
     = t(:expand)
-  = link_to t(:go_to_structure), admin_user_path(user.id), class: 'view_link member_link to-structure'
+  = link_to t(:go_to_structure), admin_user_path(resource.id), class: 'view_link member_link to-structure'

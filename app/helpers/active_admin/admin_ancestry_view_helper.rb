@@ -1,5 +1,5 @@
 module ActiveAdmin
-  module ViewHelper
+  module AdminAncestryViewHelper
     CLASSES = { child:  'panel-childless',
                 parent: 'panel-parent' }
 

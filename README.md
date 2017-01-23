@@ -1,5 +1,5 @@
 # ActiveadminAncestryView
-This gem allows to vizualize tree of [ancestry](https://github.com/stefankroes/ancestry) model in [ActiveAdmin](https://github.com/activeadmin/activeadmin) resource.
+This gem allows to vizualize tree of [Ancestry](https://github.com/stefankroes/ancestry) model in [ActiveAdmin](https://github.com/activeadmin/activeadmin) resource.
 
 ## Installation
 
@@ -20,31 +20,28 @@ $ bundle
 
 To add required assets and concerns run
 ```
-$ rails generate activeadmin_view_ancestry:install
+$ rails g activeadmin_view_ancestry:install
 ```
 
 ## Model methods
 
-In models with hide_ancestry:
+Models with has_ancestry now have the following methods:
 ```ruby
-YourModel.first.full_ancestry     # same as #ancestry, but includes instance #id
+YourModel.first.full_ancestry     # Same as #ancestry, but includes instance #id
 
-YourModel.ordered_collection(ids) # return ActiveRecord::Relation in order equal to
+YourModel.ordered_collection(ids) # Return ActiveRecord::Relation in order equal to
                                   # ids order. If ids == [2,1,3], relation will be
-                                  # sorted by id as [2,1,3] - not standart [1,2,3] way.
+                                  # sorted by id as [2,1,3] agaist standart [1,2,3]-way.
 
 ```
 
 ## TODO
-+ Formastatic methods with options:
++ Resource::DSL instance method with opt:
   - header_titles: []
   - table_titles: []
   - resource_collection: User.all
   - color: true
   - selectable: true
   - expandable: true
-+ Add sort:
-  - include methods to activeadmin resource:
-    > ensure than 'contoller do...' still can be declared
-+ Edit views to vizualize ANY resouce with ancestry
++ Edit views to vizualize ANY resouce with ancestry (resource_path ?)
 + Add .gif to description 
