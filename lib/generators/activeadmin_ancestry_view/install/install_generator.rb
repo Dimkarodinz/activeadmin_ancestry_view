@@ -20,7 +20,20 @@ module ActiveadminAncestryView
         end
       end
 
+      def add_concerns
+        ref = 'has_ancestry'
+        Dir['app/models/**/*.rb'].each do |model_file|
+          if File.readlines(model_file).grep(/has_ancestry/).any?
+            inject_into_file(model_file, concern_to_add, before: ref)
+          end
+        end
+      end
+
       private
+
+      def concern_to_add
+        "include Concerns::ActiveadminAncestryView::ModelMethods\n\t"
+      end
 
       def js_to_add
         "#= require activeadmin_ancestry_view/base\n"

@@ -1,8 +1,7 @@
 module ActiveAdmin
   module ViewHelper
     CLASSES = { child:  'panel-childless',
-                parent: 'panel-parent',
-                fired:  'panel-fired' }
+                parent: 'panel-parent' }
 
     PRETTY_COLORS = { red:    [255, 102, 102], yellow: [255, 178, 102],
                       green:  [102, 255, 102], blue:   [102, 178, 255], 
@@ -10,9 +9,9 @@ module ActiveAdmin
 
     def generate_panel_classes(user)
       attributes = []
-      attributes << user.ancestry.split('/') if user.ancestry
+      attributes << user.path_ids if user.ancestry
       attributes << child_class(user)
-      attributes.join(' ')
+      attributes.flatten.join(' ')
     end
 
     def shift_panel_by_depth(user, multiplicator = 2)

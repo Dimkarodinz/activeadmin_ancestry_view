@@ -1,5 +1,5 @@
 # ActiveadminAncestryView
-This gem allows to vizualize [ancestry](https://github.com/stefankroes/ancestry) subtree in [ActiveAdmin](https://github.com/activeadmin/activeadmin) resource.
+This gem allows to vizualize tree of [ancestry](https://github.com/stefankroes/ancestry) model in [ActiveAdmin](https://github.com/activeadmin/activeadmin) resource.
 
 ## Installation
 
@@ -18,9 +18,21 @@ And then execute
 $ bundle
 ```
 
-To install activeadmin_view_ancestry assets run
+To add required assets and concerns run
 ```
 $ rails generate activeadmin_view_ancestry:install
+```
+
+## Model methods
+
+In models with hide_ancestry:
+```ruby
+YourModel.first.full_ancestry     # same as #ancestry, but includes instance #id
+
+YourModel.ordered_collection(ids) # return ActiveRecord::Relation in order equal to
+                                  # ids order. If ids == [2,1,3], relation will be
+                                  # sorted by id as [2,1,3] - not standart [1,2,3] way.
+
 ```
 
 ## TODO
@@ -31,6 +43,8 @@ $ rails generate activeadmin_view_ancestry:install
   - color: true
   - selectable: true
   - expandable: true
-+ Add sort by ancestry
-+ ? AA resource methods
++ Add sort:
+  - include methods to activeadmin resource:
+    > ensure than 'contoller do...' still can be declared
++ Edit views to vizualize ANY resouce with ancestry
 + Add .gif to description 
