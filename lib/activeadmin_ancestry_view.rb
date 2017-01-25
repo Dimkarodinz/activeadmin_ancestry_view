@@ -4,4 +4,5 @@ require "activeadmin_ancestry_view/version"
 require "activeadmin_ancestry_view/resource_dsl"
 
 module ActiveadminAncestryView
+  ALLOWED_ACTIONS = %w(index show)
 end
