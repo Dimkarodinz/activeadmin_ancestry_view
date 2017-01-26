@@ -6,7 +6,6 @@ module ActiveadminAncestryView
     end
 
     private
-    # TODO: add options to actions
 
     def active_admin_action(action_name, opt = {}, &block)
       generator = select_action_generator(action_name)

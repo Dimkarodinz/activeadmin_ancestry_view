@@ -1,12 +1,11 @@
 / left link
 span
-  = resource.id
-  = link_to 'some link', admin_user_path(resource.id)
+  = headers[:title] ? resource.public_send(headers[:title]) : resource.id
 
 / links on right side
 a.view_link.member_link class='show-content'
-  = t(:info)
+  = headers[:info] || t(:info)
 - unless resource.is_childless?
   a.view_link.member_link class='show-childrens'
-    = t(:expand)
-  = link_to t(:go_to_structure), admin_user_path(resource.id), class: 'view_link member_link to-structure'
+    = headers[:expand] || t(:expand)
+  = link_to headers[:link_to_show] || t(:open), resource_path(resource.id), class: 'view_link member_link to-structure'

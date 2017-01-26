@@ -1,23 +1,8 @@
 table
   tbody
     tr
-      th
-        | Some text
-        b
-        = resource.first_name
-      th
-        | Some text
-        b
-        = resource.created_at.strftime("%m%y")
-      th
-        | id
-        b
-        = resource.id
-      th
-        | Some text
-        b
-        = resource.last_name
-      th
-        | Some text
-        b
-        = resource.additional
+      - unless table.blank?
+        - table.each do |header, content|
+          th
+            =header.to_s + ': '
+            =resource.public_send(content)

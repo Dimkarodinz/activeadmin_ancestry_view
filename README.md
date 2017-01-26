@@ -30,18 +30,31 @@ $ rails g activeadmin_view_ancestry:install
 Add to you ActiveAdmin resource
 ```ruby
 ActiveAdmin.register YourModel do
-
   ancestry_view(:index) do
     # Your optional code.
-    # It will executed before each template rendering
+    # It will executed before rendering of each template
   end
 
   ancestry_view(:show) do
     # Some not necessary code
   end
-
 end
   
+```
+
+## Options
+
+```ruby
+# Same options available for ancestry_view(:show)
+ancestry_view :index,
+  headers: { title: :some_model_instance_method,
+             info: 'Info',
+             expand: 'Expand',
+             link_to_show: 'Open'},
+  table: {'Name' => :first_name, :email => :email}, # key - general name; value - model instance method
+  color: true,  # TODO
+  select: true, # TODO Change color of subtree on click
+  expand: true  # TODO Show 'Expand' and 'Info' on node template
 ```
 
 ## Model methods
@@ -57,14 +70,8 @@ YourModel.ordered_collection(ids) # Return ActiveRecord::Relation in order equal
 ```
 
 ## TODO
-+ do it more OOP
-+ ancestry_view options:
-  - header_titles: []
-  - table_titles: []
-  - resource_collection: User.all
-  - color: true
-  - selectable: true
-  - expandable: true
-+ Edit views to vizualize ANY resouce with ancestry (resource_path ?)
-+ Add generator to rendering views and assets;
++ redo templates
++ Add namespace to I18n
++ isolate included AA module from rest of engine
++ Add generator to rendering views and assets
 + Add .gif to description 
