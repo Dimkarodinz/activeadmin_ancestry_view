@@ -4,8 +4,8 @@ span
 
 / links on right side
 a.view_link.member_link class='show-content'
-  = headers[:info] || t(:info)
+  = headers[:info] || t('activeadmin_ancestry_view.info')
 - unless resource.is_childless?
   a.view_link.member_link class='show-childrens'
-    = headers[:expand] || t(:expand)
-  = link_to headers[:link_to_show] || t(:open), resource_path(resource.id), class: 'view_link member_link to-structure'
+    = headers[:expand] || t('activeadmin_ancestry_view.expand')
+  = link_to headers[:link_to_show] || t('activeadmin_ancestry_view.open'), resource_path(resource.id), class: 'view_link member_link to-structure'
