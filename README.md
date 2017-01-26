@@ -3,19 +3,17 @@ This gem allows to vizualize tree of [Ancestry](https://github.com/stefankroes/a
 
 ## Usage
 
-*NOTE: Resource model should have has_ancestry in it.*
+*NOTE: Resource model should have has_ancestry.*
 
 Add to you ActiveAdmin resource
 ```ruby
 ActiveAdmin.register YourModel do
 
-  # To rewrite index action
   ancestry_view(:index) do
     # Your optional code.
     # It will executed before rendering each template
   end
 
-  # To rewrite show action
   ancestry_view(:show) do
     # Some not necessary code
   end
@@ -31,10 +29,10 @@ ancestry_view :index,
   headers: { title: :some_model_instance_method,
              info: 'Info',
              expand: 'Expand',
-             link_to_show: 'Open'},
-  table: { 'Name' => :first_name,   # key - general name to show;
-            :email => :email },     # value - model instance method
-  color: true,  # TODO
+             link_to_show: 'Open' },
+  table: { 'Name' => :first_name,   # key - name to show, value - model instance method
+            :email => :email },
+  color:  true, # TODO
   select: true, # TODO Change color of subtree on click
   expand: true  # TODO Show 'Expand' and 'Info' on node template
 ```
@@ -46,8 +44,8 @@ Models with has_ancestry now have the following methods:
 YourModel.first.full_ancestry     # Same as #ancestry, but includes instance id
 
 YourModel.ordered_collection(ids) # Return ActiveRecord::Relation in order equal to
-                                  # ids order. If ids == [2,1,3], relation will be
-                                  # sorted by id as [2,1,3] agaist standart [1,2,3] way.
+                                  # ids order. If ids equal to [2,1,3], relation will be
+                                  # sorted as [2,1,3] agaist standart [1,2,3] way.
 
 ```
 ## Installation

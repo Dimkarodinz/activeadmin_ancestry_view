@@ -17,13 +17,11 @@ module ActiveadminAncestryView
       when 'index' then IndexGenerator.new
       when 'show'  then ShowGenerator.new
       else
-        raise ActionError.new(wrong_action_message)
+        raise ActionError.new(
+          I18n.t 'activeadmin_ancestry_view.errors.wrong_action',
+                 actions: ALLOWED_ACTIONS.join(', ')
+          )
       end
-    end
-
-    def wrong_action_message
-      "Wrong action name. " \
-      "Allowed names are: #{ALLOWED_ACTIONS.join(', ')}"
     end
   end
 end

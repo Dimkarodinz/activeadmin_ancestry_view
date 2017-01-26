@@ -3,3 +3,5 @@ en:
     open: Open
     expand: Expand
     info: Info
+    errors:
+      wrong_action: "Wrong action name. Allowed actions are: %{actions}"
