@@ -25,14 +25,15 @@ $ rails g activeadmin_view_ancestry:install
 
 ## Usage
 
-*NOTE: Resource model should have has_ancestry in it*
+*NOTE: Resource model should have has_ancestry in it.*
+
 Add to you ActiveAdmin resource
 ```ruby
 ActiveAdmin.register YourModel do
 
   ancestry_view(:index) do
     # Your optional code.
-    # It will be evaluated before template rendering
+    # It will executed before each template rendering
   end
 
   ancestry_view(:show) do
@@ -65,5 +66,5 @@ YourModel.ordered_collection(ids) # Return ActiveRecord::Relation in order equal
   - selectable: true
   - expandable: true
 + Edit views to vizualize ANY resouce with ancestry (resource_path ?)
-+ Add generator to rendering views and assets
++ Add generator to rendering views and assets;
 + Add .gif to description 
