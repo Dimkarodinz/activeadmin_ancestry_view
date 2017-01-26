@@ -3,10 +3,6 @@ module ActiveadminAncestryView
     class ActionBuilder
       attr_reader :action_generator, :opt, :block
 
-      def self.call(generator, opt = {}, &block)
-        new(generator, opt, &block).call
-      end
-
       def initialize(action_generator, opt = {}, &block)
         @opt = opt
         @action_generator = action_generator
@@ -14,7 +10,7 @@ module ActiveadminAncestryView
       end
 
       def call
-        action_generator.build(opt, &block)
+        action_generator.call(opt, &block)
       end
     end
   end
