@@ -1,13 +1,13 @@
 module ActiveadminAncestryView
   module ResourceDSL
     class ControllerBuilder
-      def self.call
+      def self.call(action_name)
         %{controller do
             private
             attr_accessor :prev_sort_order
 
             # Order scoped_collection in correct sequence
-            send(:before_action, only: action_name) do
+            send(:before_action, only: '#{action_name.to_sym}') do
 
               # Disable AA sorting on index resource
               prev_sort_order = active_admin_config.sort_order
@@ -22,7 +22,7 @@ module ActiveadminAncestryView
             end
 
             # Restore AA resource sorting settings after rendering content
-            send(:after_action) do
+            send(:after_action, only: '#{action_name.to_sym}') do
               if prev_sort_order
                 active_admin_config.sort_order = prev_sort_order
                 prev_sort_order = nil

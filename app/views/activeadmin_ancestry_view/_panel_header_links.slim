@@ -1,11 +1,17 @@
 / left link
 span
-  = headers[:title] ? resource.public_send(headers[:title]) : resource.id
+  - title = resource.public_send(headers[:title]) || resource.id
+  - link_to_resource = link_to(title, resource_path(resource.id))
 
-/ links on right side
-a.view_link.member_link class='show-content'
-  = headers[:info] || t('activeadmin_ancestry_view.info')
-- unless resource.is_childless?
-  a.view_link.member_link class='show-childrens'
-    = headers[:expand] || t('activeadmin_ancestry_view.expand')
-  = link_to headers[:link_to_show] || t('activeadmin_ancestry_view.open'), resource_path(resource.id), class: 'view_link member_link to-structure'
+  - if headers[:link_on_childless]
+    = link_to_resource      
+  - else
+    = resource.is_childless? ? title : link_to_resource
+
+- if table_status
+  / links on right side
+  a.view_link.member_link.show-content
+    = headers[:info] || t('activeadmin_ancestry_view.info')
+  - unless resource.is_childless?
+    a.view_link.member_link.show-childrens
+      = headers[:expand] || t('activeadmin_ancestry_view.expand')

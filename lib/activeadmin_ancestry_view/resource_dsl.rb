@@ -2,7 +2,7 @@ module ActiveadminAncestryView
   module ResourceDSL
     def ancestry_view(action_name = 'index', opt = {}, &block)
       eval active_admin_action(action_name, opt, &block)
-      eval ControllerBuilder.call
+      eval ControllerBuilder.call(action_name)
     end
 
     private

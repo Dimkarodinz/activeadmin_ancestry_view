@@ -1,6 +1,5 @@
 en:
   activeadmin_ancestry_view:
-    open: Open
     expand: Expand
     info: Info
     errors:
