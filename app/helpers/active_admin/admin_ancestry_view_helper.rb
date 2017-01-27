@@ -15,7 +15,13 @@ module ActiveAdmin
     end
 
     def shift_panel_by_depth(resource, multiplicator = 4)
-      "margin-left: #{resource.depth * multiplicator}em"
+      shift   = multiplicator * resource.depth
+      padding = multiplicator / 2
+      margin  = shift - padding
+
+      "padding-left: #{padding}em; " \
+      "margin-left: #{margin}em; " \
+      "#{'border-left: 2px solid gray' unless resource.root?}"
     end
 
     def random_bckgr_color(resource)
