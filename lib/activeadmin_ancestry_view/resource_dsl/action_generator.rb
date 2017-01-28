@@ -1,15 +1,19 @@
 module ActiveadminAncestryView
   module ResourceDSL
     class ActionGenerator
+      def initialize(action_builder, opt = {}, &block)
+        @opt = opt
+        @action_builder = action_builder
+        @block = block if block_given?
+      end
 
-      def call(opt = {}, &block)
+      def call
+        action_builder.call(opt, &block)
       end
 
       private
 
-      def template_path
-        'activeadmin_ancestry_view/main'
-      end
+      attr_reader :action_builder, :opt, :block
     end
   end
 end

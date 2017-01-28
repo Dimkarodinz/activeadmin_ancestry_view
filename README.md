@@ -30,7 +30,7 @@ ancestry_view :index,
     title: :some_model_instance_method,
     info: 'Info',              # 'Info' link name
     expand: 'Expand',          # 'Expand' link name
-    link_on_childless: true    # Show link to resource#show for childless nodes
+    no_childless_link: true    # Hide link to resource#show for childless nodes
   },
   table: {
     'Name' => :first_name,     # Key - any string or symbol, value - model instance method
@@ -39,7 +39,6 @@ ancestry_view :index,
   },
   shift_depth: 2 # In 'em'. Default is 4
   color:  true,  # TODO On/off colorize nodes. Default is true
-  select: true,  # TODO On/off select of subtree on click. Default is true
 ```
 
 ## Model methods
@@ -89,7 +88,6 @@ uk:
 
 ## TODO
 + redo templates (add tree lines)
-+ moar options
-+ Add generator to rendering views and assets
++ update resource_collection after create new record/update (aa controller stuff)
 + isolate included AA module from rest of engine
 + Add .gif to description 

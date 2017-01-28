@@ -2,26 +2,19 @@ module ActiveadminAncestryView
   module ResourceDSL
     def ancestry_view(action_name = 'index', opt = {}, &block)
       eval active_admin_action(action_name, opt, &block)
-      eval ControllerBuilder.call(action_name)
+      eval active_admin_controller(action_name)
     end
 
     private
 
-    def active_admin_action(action_name, opt = {}, &block)
-      generator = select_action_generator(action_name)
-      ActionBuilder.new(generator, opt, &block).call
+    def active_admin_controller(action_name)
+      builder = Finder.get_controller_builder(action_name)
+      ControllerGenerator.new(builder).call
     end
 
-    def select_action_generator(action_name)
-      case action_name.to_s
-      when 'index' then IndexGenerator.new
-      when 'show'  then ShowGenerator.new
-      else
-        raise ActionError.new(
-          I18n.t 'activeadmin_ancestry_view.errors.wrong_action',
-                 actions: ALLOWED_ACTIONS.join(', ')
-          )
-      end
+    def active_admin_action(action_name, opt = {}, &block)
+      builder = Finder.get_action_builder(action_name)
+      ActionGenerator.new(builder, opt, &block).call
     end
   end
 end

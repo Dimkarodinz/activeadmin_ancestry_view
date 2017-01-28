@@ -3,10 +3,10 @@ span
   - title = resource.public_send(headers[:title]) || resource.id
   - link_to_resource = link_to(title, resource_path(resource.id))
 
-  - if headers[:link_on_childless]
-    = link_to_resource      
-  - else
+  - if headers[:no_childless_link]
     = resource.is_childless? ? title : link_to_resource
+  - else
+    = link_to_resource      
 
 - if table_status
   / links on right side
