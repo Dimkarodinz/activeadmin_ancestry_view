@@ -1,7 +1,7 @@
-div.panel-container class=generate_panel_classes(resource) id=resource.id style=shift_panel_by_depth(resource)
+div.panel-container class=generate_panel_classes(resource) id=resource.id style=shift_panel_by_depth(resource, shift_depth)
   div.panel.panel-margin-bottom
-    div.panel-header style=random_bckgr_color(resource)
-      = render 'activeadmin_ancestry_view/panel_header_links', resource: resource, headers: headers, table_status: table.present?
+    div.panel-header style=random_bckgr_color(resource, no_color)
+      = render 'activeadmin_ancestry_view/panel_header_links', resource: resource, headers: headers, table_status: table.present?, no_childless_link: no_childless_link
     - if table.present?
       div.panel_contents class='hided'
         = render 'activeadmin_ancestry_view/content_table', resource: resource, table: table

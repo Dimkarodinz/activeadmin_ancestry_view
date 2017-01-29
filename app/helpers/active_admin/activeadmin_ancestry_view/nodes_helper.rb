@@ -15,7 +15,9 @@ module ActiveAdmin
         attributes.flatten.join(' ')
       end
 
-      def shift_panel_by_depth(resource, multiplicator = 4)
+      def shift_panel_by_depth(resource, multiplicator)
+        multiplicator ||= 4
+
         shift   = multiplicator * resource.depth
         padding = multiplicator / 2
         margin  = shift - padding
@@ -25,7 +27,8 @@ module ActiveAdmin
         "#{'border-left: 2px solid gray' unless resource.root?}"
       end
 
-      def random_bckgr_color(resource)
+      def random_bckgr_color(resource, no_color = false)
+        return if no_color
         return if childless_child?(resource)
         color = random_color.join(', ')
         "background-color: rgba(#{color}, 0.7) !important"

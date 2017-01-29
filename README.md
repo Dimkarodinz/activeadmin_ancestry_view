@@ -27,23 +27,22 @@ end
 # Same options available for ancestry_view(:show)
 ancestry_view :index,
   headers: {
-    title: :some_model_instance_method,
-    info: 'Info',              # 'Info' link name
-    expand: 'Expand',          # 'Expand' link name
-    no_childless_link: true    # Hide link to resource#show for childless nodes
+    title: :some_model_instance_method, # Node title link name
+    info: 'Info',                       # 'Info' link name
+    expand: 'Expand',                   # 'Expand' link name
   },
   table: {
-    'Name' => :first_name,     # Key - any string or symbol, value - model instance method
+    'Name' => :first_name,     # Key - any string or symbol, value - model instance method.
     :email => :email           # Table, as well as 'Info' and 'Expand' links,
-                               # shows only if :table has values
-  },
-  shift_depth: 2 # In 'em'. Default is 4
-  color:  true,  # TODO On/off colorize nodes. Default is true
+  },                           # shows only if :table has some data in it.
+                               #
+  no_childless_link: true,     # Hide link to #show for childless nodes. Default is false
+  no_color: true,              # On/off color nodes. Default is false
+  shift_depth: 2               # In 'em'. Default is 4
 ```
 
 ## Model methods
 
-Models with has_ancestry now have the following methods:
 ```ruby
 YourModel.first.full_ancestry     # Same as #ancestry, but includes instance id
 
@@ -88,6 +87,5 @@ uk:
 
 ## TODO
 + redo templates (add tree lines)
-+ update resource_collection after create new record/update (aa controller stuff)
 + isolate included AA module from rest of engine
 + Add .gif to description 
