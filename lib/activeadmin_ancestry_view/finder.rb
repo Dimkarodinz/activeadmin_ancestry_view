@@ -3,13 +3,13 @@ module ActiveadminAncestryView
     class << self
       def get_action_builder(name)
         if_action_valid(name) do
-          ResourceDSL.const_get("#{name.to_s.camelize}ActionBuilder").new
+          ActiveadminAncestryView.const_get("#{name.to_s.camelize}ActionBuilder").new
         end
       end
 
       def get_controller_builder(name)
         if_action_valid(name) do
-          ResourceDSL.const_get("#{name.to_s.camelize}ControllerBuilder").new
+          ActiveadminAncestryView.const_get("#{name.to_s.camelize}ControllerBuilder").new
         end
       end
 
