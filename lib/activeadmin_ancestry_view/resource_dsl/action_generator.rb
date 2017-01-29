@@ -2,8 +2,8 @@ module ActiveadminAncestryView
   module ResourceDSL
     class ActionGenerator
       def initialize(action_builder, opt = {}, &block)
-        @opt = opt
         @action_builder = action_builder
+        @opt = opt
         @block = block if block_given?
       end
 
@@ -12,7 +12,6 @@ module ActiveadminAncestryView
       end
 
       private
-
       attr_reader :action_builder, :opt, :block
     end
   end

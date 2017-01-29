@@ -4,8 +4,8 @@ module ActiveadminAncestryView
       def call(opt = {}, &block)
         %{show do
           #{block.call if block_given?}
-          sorted = resource.subtree.sort_by(&:full_ancestry)
-          sorted.each do |res|
+          sorted_subtree = resource.subtree.sort_by(&:full_ancestry)
+          sorted_subtree.each do |res|
             render partial: '#{template_path}', 
               locals: { resource: res, 
                        headers: #{opt[:headers] || '{ title: :id }'}, 

@@ -11,11 +11,11 @@ ActiveAdmin.register YourModel do
 
   ancestry_view(:index) do
     # Your optional code.
-    # It will executed before rendering each template
+    # It will executed before templates rendering
   end
 
   ancestry_view(:show) do
-    # Some not necessary code
+    # Some not so necessary code
   end
 end
   

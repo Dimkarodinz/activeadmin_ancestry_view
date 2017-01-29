@@ -1,14 +1,13 @@
 module ActiveadminAncestryView
   module ResourceDSL
-    class IndexControllerBuilder < ControllerBuilder::Base
-
+    class IndexControllerBuilder < ControllerBuilder
       def initialize(order_type = :var_to_store_order_type)
         @order_type = order_type
       end
 
       private
 
-      attr_accessor :order_type
+      attr_reader :order_type
 
       def build_attr_accessor
         %{attr_accessor '#{order_type}'}
@@ -29,9 +28,9 @@ module ActiveadminAncestryView
 
       # Order scoped_collection in correct sequence
       def sort_scoped_collection
-        %{sorted_ids = scoped_collection.all.sort_by(&:full_ancestry).map(&:id)
+        %{ids = scoped_collection.all.sort_by(&:full_ancestry).map(&:id)
           self.class.redefine_method :scoped_collection do
-            resource_class.ordered_collection(sorted_ids)
+            resource_class.ordered_collection(ids)
           end}
       end
 

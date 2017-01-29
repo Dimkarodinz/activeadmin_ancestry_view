@@ -1,11 +1,8 @@
 module ActiveadminAncestryView
   module ResourceDSL
-    class ShowControllerBuilder < ControllerBuilder::Base
-
-      private
-
-      def build_before_action
-        # do some collection ids here
+    class ShowControllerBuilder < ControllerBuilder
+      def call
+        "" # Nothing to do
       end
     end
   end
