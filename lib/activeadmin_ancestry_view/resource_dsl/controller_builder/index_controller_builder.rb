@@ -11,19 +11,19 @@ module ActiveadminAncestryView
       attr_accessor :order_type
 
       def build_attr_accessor
-        "attr_accessor '#{order_type}'"
+        %{attr_accessor '#{order_type}'}
       end
 
-      def build_before_action(order_type)
+      def build_before_action
         %{send(:before_action, only: :index) do
-            #{save_and_clean_sort_order(order_type)}
+            #{save_and_clean_sort_order}
             #{sort_scoped_collection}
           end}
       end
 
-      def build_after_action(order_type)
+      def build_after_action
         %{send(:after_action, only: :index) do
-            #{restore_sort_order(order_type)}
+            #{restore_sort_order}
           end}
       end
 
@@ -36,13 +36,13 @@ module ActiveadminAncestryView
       end
 
       # Saves AA resource sort order order to variable, then clean it
-      def save_and_clean_sort_order(order_type)
-        "#{order_type} = active_admin_config.sort_order\n" \
-        "active_admin_config.sort_order = ''"
+      def save_and_clean_sort_order
+        %{#{order_type} = active_admin_config.sort_order
+          active_admin_config.sort_order = ''}
       end
 
       # Restore AA resource sorting settings after rendering content
-      def restore_sort_order(order_type)
+      def restore_sort_order
         %{if #{order_type}
             active_admin_config.sort_order = #{order_type}
             #{order_type} = nil

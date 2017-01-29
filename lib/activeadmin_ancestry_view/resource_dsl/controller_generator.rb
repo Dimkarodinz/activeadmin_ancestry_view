@@ -6,7 +6,7 @@ module ActiveadminAncestryView
       end
 
       def call
-        controller_builder.call
+        @controller_builder.call
       end
     end
   end
