@@ -23,8 +23,8 @@ module ActiveAdmin
         margin  = shift - padding
 
         "padding-left: #{padding}em; " \
-        "margin-left: #{margin}em; " \
-        "#{'border-left: 2px solid gray' unless resource.root?}"
+        "margin-left: #{margin}em; "
+        # "#{'border-left: 2px solid gray' unless resource.root?}"
       end
 
       def random_bckgr_color(resource, no_color = false)

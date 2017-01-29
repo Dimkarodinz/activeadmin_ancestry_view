@@ -1,6 +1,8 @@
 # ActiveadminAncestryView
 This gem allows to vizualize tree of [Ancestry](https://github.com/stefankroes/ancestry) model in [ActiveAdmin](https://github.com/activeadmin/activeadmin) resource.
 
++ TODO: add .gif here
+
 ## Usage
 
 *NOTE: Resource model should have has_ancestry.*
@@ -59,7 +61,7 @@ Add to your Gemfile
 gem 'activeadmin', github: 'activeadmin'
 gem 'ancestry'
 
-gem 'activeadmin_view_ancestry'
+gem 'activeadmin_ancestry_view'
 ```
 
 And then execute
@@ -70,7 +72,7 @@ $ bundle
 
 To add required assets and concerns run
 ```
-$ rails g activeadmin_view_ancestry:install
+$ rails g activeadmin_ancestry_view:install
 ```
 
 ## Additional
@@ -84,8 +86,3 @@ uk:
     errors:
       wrong_action: "Не той екшн. Дозволені: %{actions}"
 ```
-
-## TODO
-+ redo templates (add tree lines)
-+ isolate included AA module from rest of engine
-+ Add .gif to description 
