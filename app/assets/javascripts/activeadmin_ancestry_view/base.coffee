@@ -23,6 +23,13 @@ $(document).on 'ready page:load turbolinks:load', ->
     content = $(this).parent().next('.panel_contents')
     if content.is(':hidden')
       content.show('fast')
+
+      nodeId = $(this).parents('.panel-container').attr('id')
+      console.log document.styleSheets[0].cssRules[0]
+
+      # console.log verticalLine
+      # verticalLine = getCSSRule("[id='#{nodeId}']::before")
+      # verticalLine.style.height = '100px'
     else
       content.hide('fast')
 
@@ -30,7 +37,6 @@ $(document).on 'ready page:load turbolinks:load', ->
   $('.show-childrens').click ->
     parent_id = $(this).parents('.panel-container').attr('id')
     parent_content = $(this).parent().next('.panel_contents')
-
     # NOTE: do not use .toggleClass here
     if parent_content.is(':hidden')
       parent_content.show()
@@ -47,7 +53,6 @@ $(document).on 'ready page:load turbolinks:load', ->
   $('.panel-header').on 'click', ->
     clearAllColors()
     $(this).addClass('selectable')
-
     # add color to all node's panel headers
     parent_id = $(this).parents('.panel-container').attr('id')
     $('.panel-header').each ->
@@ -65,50 +70,95 @@ $(document).on 'ready page:load turbolinks:load', ->
 
   # find distance btw node and its last child
   verticalBranchDist = (node, lastChild) ->
-    actualDistance = distanceToTop(node, lastChild) + middleOfHeight(node)
-    Math.round actualDistance
+    distanceToTop(node, lastChild) + middleOfHeight(node)
+
+  baseBranchProp =
+    "content: ''; " +
+    "position: absolute; " +
+    "border: 0.1em solid gray; "
 
   # vertical line properies with dynamic height
   veticalBranchProp = (id, height) ->
     "margin-left: 2em; " +
-    "content: ''; " +
-    "position: absolute; " +
     "height: #{height}px; " +
     "z-index: -1; " +
-    "border: 0.1em solid gray;"
+    baseBranchProp
 
   # horizontal line properies with dynamic parameters
   horizontalBranchProp = (height) ->
     "margin-top: -#{height}px; " +
     "margin-left: -2em; " +
     "width: 2em; " +
-    "content: ''; " +
-    "position: absolute; " +
     "z-index: -2; " +
-    "border: 0.1em solid gray;"
+    baseBranchProp
 
-  # add vertical line pseudoelement to
-  # parent's panel with children
-  $('.panel-parent').each ->
-    id        = $(this).attr 'id'
-    lastChild = $(this).parent().find ".panel-container[data-last-child=#{id}]"
+  # add vertical line ( :before pseudoelement) to panel which has children
+  addVerticalLine = (node) ->
+    id        = $(node).attr 'id'
+    lastChild = $(node).parent().find ".panel-container[data-last-child=#{id}]"
 
     if $(lastChild).length
-      distance = verticalBranchDist(this, lastChild)
-
+      distance = verticalBranchDist(node, lastChild)
       document.styleSheets[0].addRule(
         "[id='#{id}']::before",
         "#{veticalBranchProp(id, distance)}"
         )
 
-  $('.panel-container').each ->
-    if $(this).hasClass('panel-root')
-      true # instead of 'continue', because of jQuery
+  # add horizontal line (:after pseudoelement) to all panels except root
+  addHorizontalLine = (node) ->
+    if $(node).hasClass('panel-root')
+      true
     else
-      id = $(this).attr('id')
-      height = Math.round middleOfHeight(this)
-
+      id = $(node).attr('id')
+      height = middleOfHeight(node)
       document.styleSheets[0].addRule(
         "[id='#{id}']::after",
         "#{horizontalBranchProp(height)}"
         )
+
+  $('.panel-parent').each ->
+    addVerticalLine(this)
+
+  $('.panel-container').each ->
+    addHorizontalLine(this)
+
+  getCSSRule = (ruleName, deleteFlag) ->
+    ruleName = ruleName.toLowerCase()
+    if document.styleSheets
+      i = 0
+      while i < document.styleSheets.length
+        styleSheet = document.styleSheets[i]
+        ii = 0
+        cssRule = false
+        loop
+          if styleSheet.cssRules
+            cssRule = styleSheet.cssRules[ii]
+          else
+            cssRule = styleSheet.rules[ii]
+          if cssRule
+            if cssRule.selectorText.toLowerCase() == ruleName
+              if deleteFlag == 'delete'
+                if styleSheet.cssRules
+                  styleSheet.deleteRule ii
+                else
+                  styleSheet.removeRule ii
+                return true
+              else
+                return cssRule
+          ii++
+          unless cssRule
+            break
+        i++
+    false
+
+  killCSSRule = (ruleName) ->
+    getCSSRule ruleName, 'delete'
+
+  addCSSRule = (ruleName) ->
+    if document.styleSheets
+      if !getCSSRule(ruleName)
+        if document.styleSheets[0].addRule
+          document.styleSheets[0].addRule ruleName, null, 0
+        else
+          document.styleSheets[0].insertRule ruleName + ' { }', 0
+    getCSSRule ruleName
