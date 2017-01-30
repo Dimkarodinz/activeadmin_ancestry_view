@@ -53,3 +53,30 @@ $(document).on 'ready page:load turbolinks:load', ->
     $('.panel-header').each ->
       if ($(this)).parents('.panel-container').hasClass(parent_id)
         $(this).addClass('selectable')
+
+  #--- Tree branches
+  # find distance btw node and its last child
+  verticalBranchDist = (node, lastChild) ->
+    dist = $(node).offset().top - $(lastChild).offset().top
+    Math.round(Math.abs(dist))
+
+  # pseudoelement line with dynamic height
+  pseudoElementProp = (id, height) ->
+    "margin-left: 2em; "
+    "margin-left: 2em; " +
+    "content: ''; " +
+    "position: absolute; " +
+    "height: #{height}px; " +
+    "z-index: -1; " +
+    "border: 0.1em solid gray;"
+
+  $('.panel-parent').each ->
+    id = $(this).attr('id')
+    lastChild = $(this).parent().find(".panel-container[data-last-child=#{id}]")
+
+    if $(lastChild).length
+      distance = verticalBranchDist(this, lastChild)
+      document.styleSheets[0].addRule(
+        "[id='#{id}']::before",
+        "#{pseudoElementProp(id, distance)}"
+        )
