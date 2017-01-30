@@ -3,7 +3,8 @@ module ActiveAdmin
     module NodesHelper
       CLASSES = {
         child:  'panel-childless',
-        parent: 'panel-parent'
+        parent: 'panel-parent',
+        root:   'panel-root'
       }
 
       PRETTY_COLORS = {
@@ -17,10 +18,11 @@ module ActiveAdmin
         attributes << resource.path_ids if resource.ancestry
         attributes << child_class(resource)
         attributes << last_child(resource)
+        attributes << CLASSES[:root] if resource.root?
         attributes.flatten.join(' ')
       end
 
-      # Added to 'data-last-child' attribute
+      # for 'data-last-child' attribute
       def last_child(resource)
         "#{resource.parent.id}" if last_child?(resource)
       end
@@ -34,7 +36,6 @@ module ActiveAdmin
 
         "padding-left: #{padding}em; " \
         "margin-left: #{margin}em; "
-        # "#{'border-left: 2px solid gray' unless resource.root?}"
       end
 
       def random_bckgr_color(resource, no_color = false)
