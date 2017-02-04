@@ -102,20 +102,22 @@ $(document).on 'ready page:load turbolinks:load', ->
       if $(this).hasClass('selectable')
         $(this).removeClass('selectable')
 
-  # TODO: nodeToSkip -> parentToStart
-  changeVerticalOfEachParent = (nodeToSkip) ->
-    $('.panel-parent').each ->
-      nodeToSkipId = $(nodeToSkip).attr 'id'
-      nodeId       = $(this).attr('id')
+  changeVerticalOfEachParent = (nodeToStart) ->
+    # true in (val in array1 for val in array2)
+    # prevRootId  = $(nodeToStart).prev('.panel-root').attr 'id'
+    # prevParents = $(nodeToStart).prevAll(".panel-parent.#{prevRootId}")
+    prevParents = $(nodeToStart).prevAll('.panel-parent')
+    actualCollection = prevParents.add(nodeToStart)
 
-      if nodeId != nodeToSkipId
-        lastChild = $(this).parent().find(
-          ".panel-container[data-last-child=#{nodeId}]")
+    actualCollection.each (i, element) ->
+      nodeId = $(element).attr('id')
+      lastChild = $(element).parent().find(
+        ".panel-container[data-last-child=#{nodeId}]")
 
-        if $(lastChild).length
-          newDistance = verticalBranchDist(this, lastChild)
-          line = getCSSRule('[id="' + nodeId + '"]::before')
-          line.style.height = newDistance.toString().concat('px')
+      if $(lastChild).length
+        newDistance = verticalBranchDist(element, lastChild)
+        line = getCSSRule('[id="' + nodeId + '"]::before')
+        line.style.height = newDistance.toString().concat('px')
 
   # inherit color from parent panel on load
   # if parent has no color, inherit from parent of parent
@@ -137,30 +139,40 @@ $(document).on 'ready page:load turbolinks:load', ->
     verticalLine  = getCSSRule('[id="' + $(node).attr('id') + '"]::before')
     
     if content.is(':hidden')
-      content.show 'fast', ->
-        uptHorizontalLine(node)
-        changeVerticalOfEachParent() # TODO: not all, only branch
+      content.show 0, ->
+        uptHorizontalLine(node) unless $(node).hasClass('panel-root')
+        changeVerticalOfEachParent(node)
 
     else
-      content.hide 'fast', ->
-        uptHorizontalLine(node)
-        changeVerticalOfEachParent()
+      content.hide 0, ->
+        uptHorizontalLine(node) unless $(node).hasClass('panel-root')
+        changeVerticalOfEachParent(node)
 
   # show-hide nodes
   $('.show-childrens').click ->
-    parent_id = $(this).parents('.panel-container').attr('id')
-    parent_content = $(this).parent().next('.panel_contents')
+    parentId = $(this).parents('.panel-container').attr('id')
+    parentContent = $(this).parent().next('.panel_contents')
     # NOTE: do not use .toggleClass here
-    if parent_content.is(':hidden')
-      parent_content.show()
+    if parentContent.is(':hidden')
+      parentContent.show()
     else
-      parent_content.hide()
+      parentContent.hide()
 
     # show-hide subtree panels
     $('.panel').each ->
-      if ($(this)).parent('.panel-container').hasClass(parent_id)
+      node = $(this).parent('.panel-container')
+      if node.hasClass(parentId)
+
         content = $(this).find('.panel_contents')
-        if parent_content.is(':visible') then content.show() else content.hide()
+        if parentContent.is(':visible')
+          content.show 0, ->
+            uptHorizontalLine(node) unless $(node).hasClass('panel-root')
+            changeVerticalOfEachParent(node)
+
+        else
+          content.hide 0, ->
+            uptHorizontalLine(node) unless $(node).hasClass('panel-root')
+            changeVerticalOfEachParent(node)
 
   # select user
   $('.panel-header').on 'click', ->
