@@ -1,5 +1,5 @@
 $(document).on 'ready page:load turbolinks:load', ->
-  # get css rule as js object. Useful for changing css rules
+  # get css rule as js object
   getCSSRule = (ruleName, deleteFlag) ->
     ruleName = ruleName.toLowerCase()
     if document.styleSheets
@@ -29,7 +29,6 @@ $(document).on 'ready page:load turbolinks:load', ->
         i++
     false
 
-  # add css rule. Useful for adding pseudoelements
   addCSSRule = (ruleName, properies) ->
     if document.styleSheets
       if !getCSSRule(ruleName)
@@ -37,6 +36,63 @@ $(document).on 'ready page:load turbolinks:load', ->
           document.styleSheets[0].addRule ruleName, properies, 0
         else
           document.styleSheets[0].insertRule ruleName + " { #{properies} }", 0
+  # find half height of the node (px)
+  middleOfHeight = (node) ->
+    Math.abs $(node).height() / 2
+
+  distanceToTop = (node, target) ->
+    Math.abs $(node).offset().top - $(target).offset().top
+
+  # find distance btw node and its last child (px)
+  verticalBranchDist = (node, lastChild) ->
+    distanceToTop(node, lastChild) + middleOfHeight(lastChild)
+
+  baseBranchProp =
+    "transition: 150ms ease; " +
+    "content: ''; " +
+    "position: absolute; " +
+    "border: 0.1em solid gray; "
+
+  # vertical line properies with dynamic height
+  veticalBranchProp = (height) ->
+    "margin-left: 2em; " +
+    "height: #{height}px; " +
+    "z-index: -1; " +
+    baseBranchProp
+
+  # horizontal line properies with dynamic parameters
+  horizontalBranchProp = (height) ->
+    "margin-top: -#{height}px; " +
+    "margin-left: -2em; " +
+    "width: 2em; " +
+    "z-index: -2; " +
+    baseBranchProp
+
+  # creates vertical line :before pseudoelement
+  addVerticalLine = (node, purposeNode) ->
+    distance = verticalBranchDist(node, purposeNode)
+    id       = $(node).attr('id')
+
+    addCSSRule(
+      "[id='#{id}']::before",
+      veticalBranchProp(distance)
+      )
+
+  # creates horizontal line :after pseudoelement
+  addHorizontalLine = (node) ->
+    id     = $(node).attr('id')
+    height = middleOfHeight(node)
+    addCSSRule(
+      "[id='#{id}']::after",
+      horizontalBranchProp(height)
+      )
+
+  uptHorizontalLine = (node) ->
+    id = $(node).attr 'id'
+    newHeight = -Math.abs middleOfHeight(node)
+    line = getCSSRule('[id="' + id + '"]::after')
+    line.style.marginTop = newHeight.toString().concat('px')
+
   findPanelHeader = (object) ->
     object.find('.panel').find('.panel-header')
 
@@ -46,12 +102,20 @@ $(document).on 'ready page:load turbolinks:load', ->
       if $(this).hasClass('selectable')
         $(this).removeClass('selectable')
 
-  changePseudoHeight = (node, oldHeight, pseudoElement) ->
-    additionalVal = $(node).height() - oldHeight
-    currentHeight = parseInt pseudoElement.style.height.replace('px','')
-    purposeHeight = (currentHeight + additionalVal).toString()
+  # TODO: nodeToSkip -> parentToStart
+  changeVerticalOfEachParent = (nodeToSkip) ->
+    $('.panel-parent').each ->
+      nodeToSkipId = $(nodeToSkip).attr 'id'
+      nodeId       = $(this).attr('id')
 
-    pseudoElement.style.height = purposeHeight.concat('px')
+      if nodeId != nodeToSkipId
+        lastChild = $(this).parent().find(
+          ".panel-container[data-last-child=#{nodeId}]")
+
+        if $(lastChild).length
+          newDistance = verticalBranchDist(this, lastChild)
+          line = getCSSRule('[id="' + nodeId + '"]::before')
+          line.style.height = newDistance.toString().concat('px')
 
   # inherit color from parent panel on load
   # if parent has no color, inherit from parent of parent
@@ -66,18 +130,21 @@ $(document).on 'ready page:load turbolinks:load', ->
   # show-hide single div
   $('.show-content').click ->
     node    = $(this).parents('.panel-container')
+    nodeId  = $(node).attr 'id'
     content = $(this).parent().next('.panel_contents')
 
     oldNodeHeight = $(node).height()
     verticalLine  = getCSSRule('[id="' + $(node).attr('id') + '"]::before')
-
+    
     if content.is(':hidden')
       content.show 'fast', ->
-        changePseudoHeight(node, oldNodeHeight, verticalLine)
+        uptHorizontalLine(node)
+        changeVerticalOfEachParent() # TODO: not all, only branch
 
     else
       content.hide 'fast', ->
-        changePseudoHeight(node, oldNodeHeight, verticalLine)
+        uptHorizontalLine(node)
+        changeVerticalOfEachParent()
 
   # show-hide nodes
   $('.show-childrens').click ->
@@ -105,59 +172,7 @@ $(document).on 'ready page:load turbolinks:load', ->
       if ($(this)).parents('.panel-container').hasClass(parent_id)
         $(this).addClass('selectable')
 
-  #--- Tree branches ---
-
-  # find middle of node (px)
-  middleOfHeight = (node) ->
-    Math.abs $(node).height() / 2
-
-  distanceToTop = (node, target) ->
-    Math.abs $(node).offset().top - $(target).offset().top
-
-  # find distance btw node and its last child (px)
-  verticalBranchDist = (node, lastChild) ->
-    distanceToTop(node, lastChild) + middleOfHeight(node)
-
-  baseBranchProp =
-    "transition: 0.2s; " +
-    "content: ''; " +
-    "position: absolute; " +
-    "border: 0.1em solid gray; "
-
-  # vertical line properies with dynamic height
-  veticalBranchProp = (height) ->
-    "margin-left: 2em; " +
-    "height: #{height}px; " +
-    "z-index: -1; " +
-    baseBranchProp
-
-  # horizontal line properies with dynamic parameters
-  horizontalBranchProp = (height) ->
-    "margin-top: -#{height}px; " +
-    "margin-left: -2em; " +
-    "width: 2em; " +
-    "z-index: -2; " +
-    baseBranchProp
-
-  # add vertical line ( :before pseudoelement) to panel which has children
-  addVerticalLine = (node, purposeNode) ->
-    distance = verticalBranchDist(node, purposeNode)
-    id       = $(node).attr('id')
-
-    addCSSRule(
-      "[id='#{id}']::before",
-      veticalBranchProp(distance)
-      )
-
-  # add horizontal line (:after pseudoelement) to all panels except root
-  addHorizontalLine = (node) ->
-    id = $(node).attr('id')
-    height = middleOfHeight(node)
-    addCSSRule(
-      "[id='#{id}']::after",
-      horizontalBranchProp(height)
-      )
-
+  # add vertical line to each parent
   $('.panel-parent').each ->
     nodeId    = $(this).attr('id')
     lastChild = $(this).parent().find(
@@ -165,8 +180,6 @@ $(document).on 'ready page:load turbolinks:load', ->
 
     addVerticalLine(this, lastChild) if $(lastChild).length
 
+  # add horizontal line to each, except root
   $('.panel-container').each ->
-    if $(this).hasClass('panel-root')
-      true
-    else
-      addHorizontalLine(this)
+    addHorizontalLine(this) unless $(this).hasClass('panel-root')

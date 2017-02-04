@@ -17,7 +17,6 @@ module ActiveAdmin
         attributes = []
         attributes << resource.path_ids if resource.ancestry
         attributes << child_class(resource)
-        attributes << last_child(resource)
         attributes << CLASSES[:root] if resource.root?
         attributes.flatten.join(' ')
       end
