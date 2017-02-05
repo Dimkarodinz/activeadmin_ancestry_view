@@ -36,6 +36,7 @@ $(document).on 'ready page:load turbolinks:load', ->
           document.styleSheets[0].addRule ruleName, properies, 0
         else
           document.styleSheets[0].insertRule ruleName + " { #{properies} }", 0
+  
   # find half height of the node (px)
   middleOfHeight = (node) ->
     Math.abs $(node).height() / 2
@@ -102,14 +103,28 @@ $(document).on 'ready page:load turbolinks:load', ->
       if $(this).hasClass('selectable')
         $(this).removeClass('selectable')
 
-  changeVerticalOfEachParent = (nodeToStart) ->
-    # true in (val in array1 for val in array2)
-    # prevRootId  = $(nodeToStart).prev('.panel-root').attr 'id'
-    # prevParents = $(nodeToStart).prevAll(".panel-parent.#{prevRootId}")
-    prevParents = $(nodeToStart).prevAll('.panel-parent')
-    actualCollection = prevParents.add(nodeToStart)
+  similarItems = (arr1, arr2) ->
+    item for item in arr2 when item in arr1
 
-    actualCollection.each (i, element) ->
+  getElements = (arrayOfIds) ->
+    $.map(arrayOfIds, (id) ->
+      $("##{id}").get()
+    )
+    
+  changeVerticalOfEachParent = (nodeToStart) ->
+    # find actual parents
+    nodeClasses  = $(nodeToStart).attr('class').split(' ')
+    parents      = $(nodeToStart).prevAll('.panel-parent')
+    parentIds    = $.map(parents, (el) -> $(el).attr 'id')
+
+    # get actual parent ids
+    actualIds = similarItems(nodeClasses, parentIds)
+    # add node id to array
+    actualIds.push $(nodeToStart).attr('id')
+
+    actualCollection = getElements(actualIds)
+
+    $.each(actualCollection, (i, element) ->
       nodeId = $(element).attr('id')
       lastChild = $(element).parent().find(
         ".panel-container[data-last-child=#{nodeId}]")
@@ -118,6 +133,7 @@ $(document).on 'ready page:load turbolinks:load', ->
         newDistance = verticalBranchDist(element, lastChild)
         line = getCSSRule('[id="' + nodeId + '"]::before')
         line.style.height = newDistance.toString().concat('px')
+    )
 
   # inherit color from parent panel on load
   # if parent has no color, inherit from parent of parent
@@ -141,12 +157,10 @@ $(document).on 'ready page:load turbolinks:load', ->
     if content.is(':hidden')
       content.show 0, ->
         uptHorizontalLine(node) unless $(node).hasClass('panel-root')
-        changeVerticalOfEachParent(node)
-
     else
       content.hide 0, ->
         uptHorizontalLine(node) unless $(node).hasClass('panel-root')
-        changeVerticalOfEachParent(node)
+    changeVerticalOfEachParent(node)
 
   # show-hide nodes
   $('.show-childrens').click ->
@@ -162,17 +176,16 @@ $(document).on 'ready page:load turbolinks:load', ->
     $('.panel').each ->
       node = $(this).parent('.panel-container')
       if node.hasClass(parentId)
-
         content = $(this).find('.panel_contents')
         if parentContent.is(':visible')
           content.show 0, ->
             uptHorizontalLine(node) unless $(node).hasClass('panel-root')
             changeVerticalOfEachParent(node)
-
         else
           content.hide 0, ->
             uptHorizontalLine(node) unless $(node).hasClass('panel-root')
             changeVerticalOfEachParent(node)
+      # todo: speed up: 1) by self vert. line; 2) by self + parent
 
   # select user
   $('.panel-header').on 'click', ->
