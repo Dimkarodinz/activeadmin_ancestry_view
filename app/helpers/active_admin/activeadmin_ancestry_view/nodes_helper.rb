@@ -26,15 +26,10 @@ module ActiveAdmin
         "#{resource.parent.id}" if last_child?(resource)
       end
 
-      def shift_panel_by_depth(resource, multiplicator)
-        multiplicator ||= 4
-
-        shift   = multiplicator * resource.depth
-        padding = multiplicator / 2
-        margin  = shift - padding
-
-        "padding-left: #{padding}em; " \
-        "margin-left: #{margin}em; "
+      def panel_shift(resource, multiplicator = 4)
+        unless resource.depth.zero?
+          "margin-left: #{multiplicator * resource.depth}em;"
+        end
       end
 
       def random_bckgr_color(resource, no_color = false)

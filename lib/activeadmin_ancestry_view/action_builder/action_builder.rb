@@ -13,7 +13,7 @@ module ActiveadminAncestryView
 
     private
 
-    def render_partial_with_options(opt)
+    def render_partial(opt)
       %{render partial: '#{template_path}', 
           locals: {
             resource: res,

@@ -40,7 +40,7 @@ ancestry_view :index,
                                #
   no_childless_link: true,     # Hide link to #show for childless nodes. Default is false
   no_color: true,              # On/off color nodes. Default is false
-  shift_depth: 2               # In 'em'. Default is 4
+  shift_depth: 3               # In 'parrots'; looks good if >= 3. Default is 4
 ```
 
 ## Model methods

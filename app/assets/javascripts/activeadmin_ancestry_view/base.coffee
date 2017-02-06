@@ -47,6 +47,7 @@ $(document).on 'ready page:load turbolinks:load', ->
       @betweenTop(node, lastChild) + @middleHeight(lastChild)
 
   branchProp =
+    baseMargin: 2 #em
     base:
       "transition: 150ms ease; " +
       "content: ''; " +
@@ -54,15 +55,15 @@ $(document).on 'ready page:load turbolinks:load', ->
       "border: 0.1em solid gray; "
 
     vertical: (height) ->
-      "margin-left: 2em; " +
+      "margin-left: #{@baseMargin}em; " +
       "height: #{height}px; " +
       "z-index: -1; " +
       @base
 
-    horizontal: (marginTop) ->
+    horizontal: (marginTop, marginLeft) ->
       "margin-top: -#{marginTop}px; " +
-      "margin-left: -2em; " +
-      "width: 2em; " +
+      "margin-left: -#{marginLeft - @baseMargin}em; " +
+      "width: #{marginLeft - @baseMargin}em; " +
       "z-index: -2; " +
       @base
 
@@ -70,20 +71,18 @@ $(document).on 'ready page:load turbolinks:load', ->
     addHorizontal: (node) ->
       id     = $(node).attr('id')
       height = distance.middleHeight(node)
+      marginLeft = $(node).attr('data-shift-multiplicator')
       CSSRule.add(
         "[id='#{id}']::after",
-        branchProp.horizontal(height)
-        )
+        branchProp.horizontal(height, marginLeft)
+      )
 
     addVertical: (node, purposeNode) ->
       dist = distance.verticalBranch(node, purposeNode)
       id   = $(node).attr('id')
-      CSSRule.add(
-        "[id='#{id}']::before",
-        branchProp.vertical(dist)
-        )
+      CSSRule.add "[id='#{id}']::before", branchProp.vertical(dist)
 
-    uptHorizontal: (node) ->
+    updHorizontal: (node) ->
       if $(node).hasClass('panel-root') then false
       else
         id        = $(node).attr 'id'
@@ -91,7 +90,7 @@ $(document).on 'ready page:load turbolinks:load', ->
         line      = CSSRule.get '[id="' + id + '"]::after'
         line.style.marginTop = newHeight.toString().concat('px')
 
-    uptVertical: (node) ->
+    updVertical: (node) ->
       nodeId    = $(node).attr('id')
       lastChild = $(node).parent().find(
         ".panel-container[data-last-child=#{nodeId}]")
@@ -101,7 +100,7 @@ $(document).on 'ready page:load turbolinks:load', ->
         line        = CSSRule.get('[id="' + nodeId + '"]::before')
         line.style.height = newDistance.toString().concat('px')
 
-    uptEachVertical: (node) ->
+    updEachVertical: (node) ->
       # find actual parents
       nodeClasses = $(node).attr('class').split(' ')
       allParents  = $(node).prevAll('.panel-parent')
@@ -115,7 +114,7 @@ $(document).on 'ready page:load turbolinks:load', ->
       # update vertical pseudoelement of actual elements
       that = this
       $.each(actualCollection, (i, element) ->
-        that.uptVertical(element)
+        that.updVertical(element)
       )
 
   findPanelHeader = (object) ->
@@ -153,10 +152,10 @@ $(document).on 'ready page:load turbolinks:load', ->
     verticalLine  = CSSRule.get('[id="' + $(node).attr('id') + '"]::before')
     
     if content.is(':hidden')
-      content.show 0, -> pseudoElement.uptHorizontal(node)
+      content.show 0, -> pseudoElement.updHorizontal(node)
     else
-      content.hide 0, -> pseudoElement.uptHorizontal(node)
-    pseudoElement.uptEachVertical(node)
+      content.hide 0, -> pseudoElement.updHorizontal(node)
+    pseudoElement.updEachVertical(node)
 
   # show-hide content table for bunch of nodes
   $('.show-childrens').click ->
@@ -174,26 +173,25 @@ $(document).on 'ready page:load turbolinks:load', ->
         content = $(this).find('.panel_contents')
 
         if nodeContent.is(':visible')
-          content.show 0, -> pseudoElement.uptHorizontal(subNode)
+          content.show 0, -> pseudoElement.updHorizontal(subNode)
         else
-          content.hide 0, -> pseudoElement.uptHorizontal(subNode)
-
+          content.hide 0, -> pseudoElement.updHorizontal(subNode)
         subLastChildId = $(subNode).attr 'data-last-child'
-        pseudoElement.uptVertical $("##{subLastChildId}") if subLastChildId?
+        pseudoElement.updVertical $("##{subLastChildId}") if subLastChildId?
 
-    pseudoElement.uptEachVertical(lastChild)
+    pseudoElement.updEachVertical(lastChild)
 
   # select user
   $('.panel-header').on 'click', ->
     clearAllColors()
     $(this).addClass('selectable')
-    # add color to all node's panel headers
-    parent_id = $(this).parents('.panel-container').attr('id')
+    parentId = $(this).parents('.panel-container').attr('id')
+
     $('.panel-header').each ->
-      if ($(this)).parents('.panel-container').hasClass(parent_id)
+      if ($(this)).parents('.panel-container').hasClass(parentId)
         $(this).addClass('selectable')
 
-  # add vertical line to each parent
+  # add vertical line to each .panel-parent
   $('.panel-parent').each ->
     nodeId    = $(this).attr('id')
     lastChild = $(this).parent().find(
@@ -201,6 +199,6 @@ $(document).on 'ready page:load turbolinks:load', ->
 
     pseudoElement.addVertical(this, lastChild) if $(lastChild).length
 
-  # add horizontal line to each, except root
   $('.panel-container').each ->
+    # $(this).css('margin-left', $(this).attr('data-panel-shift') + 'em' )
     pseudoElement.addHorizontal(this) unless $(this).hasClass('panel-root')
