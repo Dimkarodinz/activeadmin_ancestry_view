@@ -44,7 +44,7 @@ $(document).on 'ready page:load turbolinks:load', ->
       Math.abs $(sourceNode).offset().top - $(targetNode).offset().top
 
     verticalBranch: (node, lastChild) ->
-      this.betweenTop(node, lastChild) + this.middleHeight(lastChild)
+      @betweenTop(node, lastChild) + @middleHeight(lastChild)
 
   branchProp =
     base:
@@ -57,14 +57,14 @@ $(document).on 'ready page:load turbolinks:load', ->
       "margin-left: 2em; " +
       "height: #{height}px; " +
       "z-index: -1; " +
-      this.base
+      @base
 
     horizontal: (marginTop) ->
       "margin-top: -#{marginTop}px; " +
       "margin-left: -2em; " +
       "width: 2em; " +
       "z-index: -2; " +
-      this.base
+      @base
 
   pseudoElement =
     addHorizontal: (node) ->
@@ -107,13 +107,16 @@ $(document).on 'ready page:load turbolinks:load', ->
       allParents  = $(node).prevAll('.panel-parent')
       parentIds   = $.map(allParents, (el) -> $(el).attr 'id')
       actualIds   = similarItems(nodeClasses, parentIds)
+
       # add current node id
       actualIds.push $(node).attr('id')
       # get array of jquery elements from actual ids
       actualCollection = getElements(actualIds)
       # update vertical pseudoelement of actual elements
-      $.each actualCollection, (i, element) ->
-        this.uptVertical(element)
+      that = this
+      $.each(actualCollection, (i, element) ->
+        that.uptVertical(element)
+      )
 
   findPanelHeader = (object) ->
     object.find('.panel').find('.panel-header')
@@ -128,9 +131,7 @@ $(document).on 'ready page:load turbolinks:load', ->
     item for item in arr2 when item in arr1
 
   getElements = (arrayOfIds) ->
-    $.map(arrayOfIds, (id) ->
-      $("##{id}").get()
-    )
+    $.map arrayOfIds, (id) -> $("##{id}").get()
 
   # inherit color from parent panel on load
   # if parent has no color, inherit from parent of parent
@@ -155,7 +156,7 @@ $(document).on 'ready page:load turbolinks:load', ->
       content.show 0, -> pseudoElement.uptHorizontal(node)
     else
       content.hide 0, -> pseudoElement.uptHorizontal(node)
-    pseudoelement.uptEachVertical(node)
+    pseudoElement.uptEachVertical(node)
 
   # show-hide content table for bunch of nodes
   $('.show-childrens').click ->
@@ -180,7 +181,7 @@ $(document).on 'ready page:load turbolinks:load', ->
         subLastChildId = $(subNode).attr 'data-last-child'
         pseudoElement.uptVertical $("##{subLastChildId}") if subLastChildId?
 
-    pseudoelement.uptEachVertical(lastChild)
+    pseudoElement.uptEachVertical(lastChild)
 
   # select user
   $('.panel-header').on 'click', ->
