@@ -89,10 +89,13 @@ $(document).on 'ready page:load turbolinks:load', ->
       )
 
   uptHorizontalLine = (node) ->
-    id = $(node).attr 'id'
-    newHeight = -Math.abs middleOfHeight(node)
-    line = getCSSRule('[id="' + id + '"]::after')
-    line.style.marginTop = newHeight.toString().concat('px')
+    if $(node).hasClass('panel-root')
+      false
+    else
+      id = $(node).attr 'id'
+      newHeight = -Math.abs middleOfHeight(node)
+      line = getCSSRule('[id="' + id + '"]::after')
+      line.style.marginTop = newHeight.toString().concat('px')
 
   findPanelHeader = (object) ->
     object.find('.panel').find('.panel-header')
@@ -113,27 +116,28 @@ $(document).on 'ready page:load turbolinks:load', ->
     
   changeVerticalOfEachParent = (nodeToStart) ->
     # find actual parents
-    nodeClasses  = $(nodeToStart).attr('class').split(' ')
-    parents      = $(nodeToStart).prevAll('.panel-parent')
-    parentIds    = $.map(parents, (el) -> $(el).attr 'id')
+    nodeClasses = $(nodeToStart).attr('class').split(' ')
+    allParents  = $(nodeToStart).prevAll('.panel-parent')
 
-    # get actual parent ids
-    actualIds = similarItems(nodeClasses, parentIds)
+    parentIds   = $.map(allParents, (el) -> $(el).attr 'id')
+    actualIds   = similarItems(nodeClasses, parentIds)
+
     # add node id to array
     actualIds.push $(nodeToStart).attr('id')
-
+    # ids to array of jquery elements
     actualCollection = getElements(actualIds)
 
-    $.each(actualCollection, (i, element) ->
-      nodeId = $(element).attr('id')
-      lastChild = $(element).parent().find(
-        ".panel-container[data-last-child=#{nodeId}]")
+    $.each actualCollection, (i, element) -> updateVerticalLine(element)
 
-      if $(lastChild).length
-        newDistance = verticalBranchDist(element, lastChild)
-        line = getCSSRule('[id="' + nodeId + '"]::before')
-        line.style.height = newDistance.toString().concat('px')
-    )
+  updateVerticalLine = (node) ->
+    nodeId = $(node).attr('id')
+    lastChild = $(node).parent().find(
+      ".panel-container[data-last-child=#{nodeId}]")
+
+    if $(lastChild).length
+      newDistance = verticalBranchDist(node, lastChild)
+      line = getCSSRule('[id="' + nodeId + '"]::before')
+      line.style.height = newDistance.toString().concat('px')
 
   # inherit color from parent panel on load
   # if parent has no color, inherit from parent of parent
@@ -145,7 +149,7 @@ $(document).on 'ready page:load turbolinks:load', ->
       if $(this).hasClass(id)
         findPanelHeader($(this)).css('background-color', parentColor)
 
-  # show-hide single div
+  # show-hide content table of single div
   $('.show-content').click ->
     node    = $(this).parents('.panel-container')
     nodeId  = $(node).attr 'id'
@@ -155,37 +159,35 @@ $(document).on 'ready page:load turbolinks:load', ->
     verticalLine  = getCSSRule('[id="' + $(node).attr('id') + '"]::before')
     
     if content.is(':hidden')
-      content.show 0, ->
-        uptHorizontalLine(node) unless $(node).hasClass('panel-root')
+      content.show 0, -> uptHorizontalLine(node)
     else
-      content.hide 0, ->
-        uptHorizontalLine(node) unless $(node).hasClass('panel-root')
+      content.hide 0, -> uptHorizontalLine(node)
     changeVerticalOfEachParent(node)
 
-  # show-hide nodes
+  # show-hide content table for bunch of nodes
   $('.show-childrens').click ->
-    parentId = $(this).parents('.panel-container').attr('id')
-    parentContent = $(this).parent().next('.panel_contents')
-    # NOTE: do not use .toggleClass here
-    if parentContent.is(':hidden')
-      parentContent.show()
-    else
-      parentContent.hide()
+    nodeId      = $(this).parents('.panel-container').attr('id')
+    nodeContent = $(this).parent().next('.panel_contents')
+    lastChild   = $(".panel-container[data-last-child=#{nodeId}]")
+    lastChildId = $(lastChild).attr('id')
 
-    # show-hide subtree panels
+    # NOTE: do not use .toggleClass here
+    if nodeContent.is(':hidden') then nodeContent.show() else nodeContent.hide()
+
     $('.panel').each ->
-      node = $(this).parent('.panel-container')
-      if node.hasClass(parentId)
+      subNode = $(this).parent('.panel-container')
+      if subNode.hasClass(nodeId)
         content = $(this).find('.panel_contents')
-        if parentContent.is(':visible')
-          content.show 0, ->
-            uptHorizontalLine(node) unless $(node).hasClass('panel-root')
-            changeVerticalOfEachParent(node)
+
+        if nodeContent.is(':visible')
+          content.show 0, -> uptHorizontalLine(subNode)
         else
-          content.hide 0, ->
-            uptHorizontalLine(node) unless $(node).hasClass('panel-root')
-            changeVerticalOfEachParent(node)
-      # todo: speed up: 1) by self vert. line; 2) by self + parent
+          content.hide 0, -> uptHorizontalLine(subNode)
+
+        subLastChildId = $(subNode).attr 'data-last-child'
+        updateVerticalLine $("##{subLastChildId}") if subLastChildId?
+
+    changeVerticalOfEachParent(lastChild)
 
   # select user
   $('.panel-header').on 'click', ->
