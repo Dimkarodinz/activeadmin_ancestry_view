@@ -6,6 +6,7 @@ module ActiveadminAncestryView
           #{build_attr_accessor}
           #{build_before_action}
           #{build_after_action}
+          #{build_methods}
         end}
     end
 
@@ -18,6 +19,9 @@ module ActiveadminAncestryView
     end
 
     def build_after_action
+    end
+
+    def build_methods
     end
   end
 end

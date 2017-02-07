@@ -15,7 +15,6 @@ module ActiveadminAncestryView
     def build_before_action
       %{send(:before_action, only: :index) do
           #{save_and_clean_sort_order}
-          #{sort_scoped_collection}
         end}
     end
 
@@ -25,10 +24,10 @@ module ActiveadminAncestryView
         end}
     end
 
-    # Order scoped_collection in correct sequence
-    def sort_scoped_collection
-      %{ids = scoped_collection.all.sort_by(&:full_ancestry).map(&:id)
-        self.class.redefine_method :scoped_collection do
+    def build_methods
+      # Order scoped_collection in correct sequence
+      %{def scoped_collection
+          ids = super.all.sort_by(&:full_ancestry).map(&:id)
           resource_class.ordered_collection(ids)
         end}
     end
