@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.description = "Ancestry tree view in ActiveAdmin resource"
   s.license     = "MIT"
 
-  s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
+  s.files = Dir["{app,config,lib}/**/*", "MIT-LICENSE", "Rakefile"]
 
   s.add_dependency "rails", "~> 4.2.7.1"
 

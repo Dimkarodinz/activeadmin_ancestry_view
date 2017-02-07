@@ -1,7 +1,7 @@
 # ActiveadminAncestryView
 This gem allows to vizualize tree of [Ancestry](https://github.com/stefankroes/ancestry) model in [ActiveAdmin](https://github.com/activeadmin/activeadmin) resource.
 
-+ TODO: add .gif here
+<img src="./docs/images/resource_tree.gif"/>
 
 ## Usage
 
@@ -10,7 +10,6 @@ This gem allows to vizualize tree of [Ancestry](https://github.com/stefankroes/a
 Add to you ActiveAdmin resource
 ```ruby
 ActiveAdmin.register YourModel do
-
   ancestry_view(:index) do
     # Your optional code.
     # It will executed before templates rendering
