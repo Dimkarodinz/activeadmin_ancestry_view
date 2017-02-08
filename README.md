@@ -5,7 +5,7 @@ This gem allows to vizualize tree of [Ancestry](https://github.com/stefankroes/a
 
 ## Usage
 
-*NOTE: Resource model should have has_ancestry.*
+*NOTE: Resource model should have `has_ancestry`.*
 
 Add to you ActiveAdmin resource
 ```ruby
@@ -16,7 +16,7 @@ ActiveAdmin.register YourModel do
   end
 
   ancestry_view(:show) do
-    # Some not so necessary code
+    # Some your optional code
   end
 end
   
@@ -35,11 +35,11 @@ ancestry_view :index,
   table: {
     'Name' => :first_name,     # Key - any string or symbol, value - model instance method.
     :email => :email           # Table, as well as 'Info' and 'Expand' links,
-  },                           # shows only if :table has some data in it.
-                               #
+  },                           # shows only if :table has values.
+
   no_childless_link: true,     # Hide link to #show for childless nodes. Default is false
   no_color: true,              # On/off color nodes. Default is false
-  shift_depth: 3               # In 'parrots'; looks good if >= 3. Default is 4
+  shift_depth: 4               # In 'parrots'; looks good if >= 3. Default is 4
 ```
 
 ## Model methods
@@ -74,9 +74,23 @@ To add required assets and concerns run
 $ rails g activeadmin_ancestry_view:install
 ```
 
-## Additional
+## Customization
+For index resource you are still able to use `scoped_collection`.
+For example, to not displaying too deep nodes:
 
-You can change default locale setting. In `config/locales`:
+```ruby
+ActiveAdmin.register SomeModel do
+  ...
+  controller do
+    def scoped_collection
+      resource_class.to_depth(2)
+    end
+  end
+end
+```
+It will hide nodes with depth > 2.
+
+Also, you can change default locale setting. In `config/locales`:
 ```
 uk:
   activeadmin_ancestry_view:

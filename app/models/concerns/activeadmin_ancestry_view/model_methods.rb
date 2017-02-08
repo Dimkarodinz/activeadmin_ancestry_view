@@ -3,8 +3,7 @@ module Concerns
     extend ActiveSupport::Concern
 
     included do
-
-      # Return AcitveRecord::Relation with same order as passed to method.
+      # Return ActiveRecord::Relation with same order as passed to method.
       # For expamle, .ordered_collection([2,1,3]) will return
       # relation with ids [2,1,3] against standart [1,2,3] order.
       def self.ordered_collection(ids)

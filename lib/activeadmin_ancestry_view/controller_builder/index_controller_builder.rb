@@ -1,48 +1,53 @@
 module ActiveadminAncestryView
   class IndexControllerBuilder < ControllerBuilder
-    def initialize(order_type = :var_to_store_order_type)
-      @order_type = order_type
-    end
-
     private
 
-    attr_reader :order_type
+    ORDER_VAR_NAME          = 'i_am_storing_sort_order'
+    OLD_SCOPED_COL_VAR_NAME = 'i_am_storing_old_scoped_collection'
 
     def build_attr_accessor
-      %{attr_accessor '#{order_type}'}
+      %{attr_accessor :#{ORDER_VAR_NAME}}
     end
 
     def build_before_action
       %{send(:before_action, only: :index) do
           #{save_and_clean_sort_order}
+          #{save_old_scoped_collection}
+          #{sort_scoped_collection}
         end}
     end
 
     def build_after_action
       %{send(:after_action, only: :index) do
           #{restore_sort_order}
+          #{restore_old_scoped_collection}
         end}
     end
 
-    def build_methods
-      # Order scoped_collection in correct sequence
-      %{def scoped_collection
-          ids = super.all.sort_by(&:full_ancestry).map(&:id)
+    def save_old_scoped_collection
+      "self.class.send :alias_method, :#{OLD_SCOPED_COL_VAR_NAME}, :scoped_collection\n"
+    end
+
+    def sort_scoped_collection
+      %{self.class.redefine_method(:scoped_collection) do
+          ids = #{OLD_SCOPED_COL_VAR_NAME}.all.sort_by(&:full_ancestry).map(&:id)
           resource_class.ordered_collection(ids)
         end}
     end
 
-    # Saves AA resource sort order order to variable, then clean it
+    def restore_old_scoped_collection
+      "self.class.send :alias_method, :scoped_collection, :#{OLD_SCOPED_COL_VAR_NAME}\n"
+    end
+
     def save_and_clean_sort_order
-      %{#{order_type} = active_admin_config.sort_order
+      %{#{ORDER_VAR_NAME} = active_admin_config.sort_order
         active_admin_config.sort_order = ''}
     end
 
-    # Restore AA resource sorting settings after rendering content
     def restore_sort_order
-      %{if #{order_type}
-          active_admin_config.sort_order = #{order_type}
-          #{order_type} = nil
+      %{if #{ORDER_VAR_NAME}
+          active_admin_config.sort_order = #{ORDER_VAR_NAME}
+          #{ORDER_VAR_NAME} = nil
         end}
     end
   end

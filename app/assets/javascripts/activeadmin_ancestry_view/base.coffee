@@ -28,6 +28,7 @@ $(document).on 'ready page:load turbolinks:load', ->
               break
           i++
       false
+
     add: (ruleName, properies) ->
       if document.styleSheets
         if !this.get(ruleName)
@@ -47,7 +48,8 @@ $(document).on 'ready page:load turbolinks:load', ->
       @betweenTop(node, lastChild) + @middleHeight(lastChild)
 
   branchProp =
-    baseMargin: 2 #em
+    baseMargin: 2 # em
+
     base:
       "transition: 150ms ease; " +
       "content: ''; " +
@@ -191,7 +193,7 @@ $(document).on 'ready page:load turbolinks:load', ->
       if ($(this)).parents('.panel-container').hasClass(parentId)
         $(this).addClass('selectable')
 
-  # add vertical line to each .panel-parent
+  # add vertical line to each parent node
   $('.panel-parent').each ->
     nodeId    = $(this).attr('id')
     lastChild = $(this).parent().find(
@@ -199,6 +201,6 @@ $(document).on 'ready page:load turbolinks:load', ->
 
     pseudoElement.addVertical(this, lastChild) if $(lastChild).length
 
+  # add horizontal line to each node except root
   $('.panel-container').each ->
-    # $(this).css('margin-left', $(this).attr('data-panel-shift') + 'em' )
     pseudoElement.addHorizontal(this) unless $(this).hasClass('panel-root')
