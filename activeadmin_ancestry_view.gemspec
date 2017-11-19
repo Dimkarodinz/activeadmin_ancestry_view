@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
 
   s.files = Dir["{app,config,lib}/**/*", "MIT-LICENSE", "Rakefile"]
 
-  s.add_dependency "rails", "~> 4.2"
+  s.add_dependency "rails", ">= 4.2"
 
   s.add_dependency 'activeadmin', '>= 1.0.0.pre4'
   s.add_dependency 'ancestry'
