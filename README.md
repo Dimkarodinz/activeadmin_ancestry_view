@@ -23,7 +23,7 @@ end
 ```
 
 ## Options
-###NOTE
+NOTE
 Options - it's a extended version of `ancestry_views(:index)` or `ancestry_view(:show)`, actually just optional hash.
 So please, try to include only *ONE* `ancestry_view` per action (*index* or *show*). In opposite case it may lead to loop with "stack level too deep" error as a result.
 
