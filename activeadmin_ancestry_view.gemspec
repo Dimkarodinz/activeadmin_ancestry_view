@@ -21,8 +21,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'activeadmin', '>= 1.0.0.pre4'
   s.add_dependency 'ancestry'
   s.add_dependency 'jquery-rails'
-
-  s.add_development_dependency 'slim-rails'
+  s.add_dependency 'slim-rails'
   s.add_development_dependency "bundler", "~> 1.13"
 
   s.required_ruby_version = '>= 2.3.0'
